@@ -1,6 +1,6 @@
 <template>
   <defaultLayout>
-    <Form @submit="onSubmit" :validation-schema="schema" @invalid-submit="onInvalidSubmit">
+    <Form @submit="onSubmit" :validation-schema="schema">
       <div class="space-y-12">
         <div
           class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 md:col-span-2 mx-auto"
@@ -127,7 +127,7 @@
             type="submit"
             class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            Save
+            Submit
           </button>
         </div>
       </div>
@@ -136,22 +136,36 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router'
 import defaultLayout from '@/layouts/defaultLayout.vue'
 import { Field, Form, ErrorMessage } from 'vee-validate'
 import * as yup from 'yup'
+const router = useRouter()
 const schema = yup.object({
   first_name: yup.string().required(),
   last_name: yup.string().required(),
   email: yup.string().required().email(),
   country: yup.string().required(),
-  addeess: yup.string().required(),
+  address: yup.string().required(),
   city: yup.string().required(),
   state: yup.string().required(),
   pincode: yup.number().required()
 })
+
+// Submit function to forms
 function onSubmit(values) {
-  // Submit values to API...
-  alert(JSON.stringify(values, null, 2))
+  const users = JSON.parse(localStorage.getItem('users'))
+  //   console.log(JSON.parse(users), 'users')
+  const findUsers = users.find((element) => element.email === values.email)
+  if (findUsers) {
+    alert('User already exists')
+    return
+  } else {
+    users.push(values)
+    localStorage.setItem('users', JSON.stringify(users))
+    // literal string path
+    router.push({ path: '/users' })
+  }
 }
 </script>
 

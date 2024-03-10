@@ -1,12 +1,12 @@
 <template>
-  <div class="min-h-full">
-    <div class="bg-gray-800 pb-32">
+  <div class="min-h-full bg-gray-800">
+    <div class="pb-32 h-full">
       <HeaderNav />
-      <header class="py-10">
+      <!-- <header class="py-10">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h1 class="text-3xl font-bold tracking-tight text-white">{{ currentPageName }}</h1>
         </div>
-      </header>
+      </header> -->
     </div>
 
     <main class="-mt-32">
