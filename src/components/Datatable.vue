@@ -24,7 +24,7 @@
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-800 text-gray-600">
-                  <tr v-for="person in people" :key="person.email">
+                  <tr v-for="(person, index) in people" :key="person.email">
                     <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-0">
                       {{ person.first_name }} {{ person.last_name }}
                     </td>
@@ -42,9 +42,16 @@
                     <td
                       class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0"
                     >
-                      <a href="#" class="text-indigo-400 hover:text-indigo-800"
-                        >Edit<span class="sr-only">, {{ person.name }}</span></a
+                      <router-link
+                        :to="{
+                          path: `add-users`,
+                          params: { id: index },
+                          query: { id: index }
+                        }"
+                        class="text-indigo-400 hover:text-indigo-800"
                       >
+                        Edit
+                      </router-link>
                     </td>
                   </tr>
                 </tbody>

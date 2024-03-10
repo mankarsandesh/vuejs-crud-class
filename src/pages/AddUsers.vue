@@ -13,6 +13,7 @@
               <Field
                 name="first_name"
                 type="email"
+                v-model="userInfo.first_name"
                 class="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
               />
               <ErrorMessage name="first_name" class="text-red-400 text-sm pt-2" />
@@ -27,6 +28,7 @@
               <Field
                 name="last_name"
                 type="text"
+                v-model="userInfo.last_name"
                 class="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
               />
               <ErrorMessage name="last_name" class="text-red-400 text-sm pt-2" />
@@ -41,6 +43,7 @@
               <Field
                 name="email"
                 type="email"
+                v-model="userInfo.email"
                 class="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
               />
               <ErrorMessage name="email" class="text-red-400 text-sm pt-2" />
@@ -55,6 +58,7 @@
               <Field
                 name="country"
                 as="select"
+                v-model="userInfo.country"
                 class="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
               >
                 <option value="indian">India</option>
@@ -73,6 +77,7 @@
               <Field
                 name="address"
                 type="text"
+                v-model="userInfo.address"
                 class="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
               />
               <ErrorMessage name="address" class="text-red-400 text-sm pt-2" />
@@ -85,6 +90,7 @@
               <Field
                 name="city"
                 type="text"
+                v-model="userInfo.city"
                 class="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
               />
               <ErrorMessage name="city" class="text-red-400 text-sm pt-2" />
@@ -99,6 +105,7 @@
               <Field
                 name="state"
                 type="text"
+                v-model="userInfo.state"
                 class="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
               />
               <ErrorMessage name="state" class="text-red-400 text-sm pt-2" />
@@ -112,7 +119,8 @@
             <div class="mt-2">
               <Field
                 name="pincode"
-                type="text"
+                type="number"
+                v-model="userInfo.pincode"
                 class="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
               />
               <ErrorMessage name="pincode" class="text-red-400 text-sm pt-2" />
@@ -136,11 +144,14 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import defaultLayout from '@/layouts/defaultLayout.vue'
 import { Field, Form, ErrorMessage } from 'vee-validate'
 import * as yup from 'yup'
+import { ref, onMounted } from 'vue'
+
 const router = useRouter()
+const route = useRoute()
 const schema = yup.object({
   first_name: yup.string().required(),
   last_name: yup.string().required(),
@@ -149,9 +160,23 @@ const schema = yup.object({
   address: yup.string().required(),
   city: yup.string().required(),
   state: yup.string().required(),
-  pincode: yup.number().required()
+  pincode: yup
+    .number()
+    .transform((value) => (Number.isNaN(value) ? null : value))
+    .nullable()
+    .required()
 })
 
+const userInfo = ref({
+  first_name: '',
+  last_name: '',
+  email: '',
+  country: '',
+  addreess: '',
+  city: '',
+  state: '',
+  pincode: ''
+})
 // Submit function to forms
 function onSubmit(values) {
   const users = JSON.parse(localStorage.getItem('users'))
@@ -167,6 +192,16 @@ function onSubmit(values) {
     router.push({ path: '/users' })
   }
 }
+
+onMounted(() => {
+  console.log(route.query, 'route')
+  const userId = route.query.id
+  if (userId) {
+    const users = JSON.parse(localStorage.getItem('users'))
+    console.log(users[userId], 'users')
+    userInfo.value = users[userId]
+  }
+})
 </script>
 
 <style lang="scss" scoped>
